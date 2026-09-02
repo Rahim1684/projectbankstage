@@ -204,7 +204,7 @@ pipeline {
 
     failure {
       slackSend(
-        channel: '#test-jenkins',
+        channel: '#all-formationdevops',
         color: '#ff0000',
         message: "❌ FAILURE — Le pipeline #${BUILD_NUMBER} a échoué ! ⚠️"
       )
