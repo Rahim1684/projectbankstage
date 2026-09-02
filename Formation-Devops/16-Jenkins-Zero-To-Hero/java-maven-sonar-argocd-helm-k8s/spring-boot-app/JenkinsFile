@@ -107,28 +107,71 @@ pipeline {
     /////////////////////////////////////////////////////////
     // 4. UPDATE K8S MANIFEST (HORS DOCKER - TRÈS IMPORTANT)
     /////////////////////////////////////////////////////////
+    //stage('4. Mise à jour du manifeste Kubernetes') {
+      //agent none
+      //steps {
+        //withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
+          //sh """
+            //set -e
+
+            //REPO_DIR="\$WORKSPACE/temp-gitops-repo"
+            //rm -rf "\$REPO_DIR"
+            //mkdir -p "\$REPO_DIR"
+
+            //git clone https://github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git "\$REPO_DIR"
+            //cd "\$REPO_DIR"
+
+            //git config user.email "TON_EMAIL_GITHUB@example.com"
+            //git config user.name "${GIT_USER_NAME}"
+
+            //MANIFEST_PATH="Formation-Devops/16-Jenkins-Zero-To-Hero/java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml"
+
+            //sed -i "s#image: diallo962/ultimate-cicd:.*#image: diallo962/ultimate-cicd:${BUILD_NUMBER}#" "\$MANIFEST_PATH"
+
+            //git add "\$MANIFEST_PATH"
+
+            //if git diff --staged --quiet; then
+              //echo "Aucun changement → rien à pousser"
+              //exit 0
+            //fi
+
+            //git commit -m "Deploy v${BUILD_NUMBER} (build #${BUILD_NUMBER})"
+            //git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
+
+          //  echo "Push réussi ! ArgoCD va déployer la v${BUILD_NUMBER}"
+        //  """
+      //  }
+    //  }
+  //  }
+
+//  } // end stages
+
+
+/////////////////////////////////////////////////////////
+    // 4. UPDATE K8S MANIFEST (HORS DOCKER - TRÈS IMPORTANT)
+    /////////////////////////////////////////////////////////
     stage('4. Mise à jour du manifeste Kubernetes') {
       agent none
       steps {
         withCredentials([string(credentialsId: 'github', variable: 'GITHUB_TOKEN')]) {
-          sh """
+          sh '''
             set -e
 
-            REPO_DIR="\$WORKSPACE/temp-gitops-repo"
-            rm -rf "\$REPO_DIR"
-            mkdir -p "\$REPO_DIR"
+            REPO_DIR="$WORKSPACE/temp-gitops-repo"
+            rm -rf "$REPO_DIR"
+            mkdir -p "$REPO_DIR"
 
-            git clone https://github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git "\$REPO_DIR"
-            cd "\$REPO_DIR"
+            git clone https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git "$REPO_DIR"
+            cd "$REPO_DIR"
 
             git config user.email "TON_EMAIL_GITHUB@example.com"
             git config user.name "${GIT_USER_NAME}"
 
             MANIFEST_PATH="Formation-Devops/16-Jenkins-Zero-To-Hero/java-maven-sonar-argocd-helm-k8s/spring-boot-app-manifests/deployment.yml"
 
-            sed -i "s#image: diallo962/ultimate-cicd:.*#image: diallo962/ultimate-cicd:${BUILD_NUMBER}#" "\$MANIFEST_PATH"
+            sed -i "s#image: diallo962/ultimate-cicd:.*#image: diallo962/ultimate-cicd:${BUILD_NUMBER}#" "$MANIFEST_PATH"
 
-            git add "\$MANIFEST_PATH"
+            git add "$MANIFEST_PATH"
 
             if git diff --staged --quiet; then
               echo "Aucun changement → rien à pousser"
@@ -139,12 +182,10 @@ pipeline {
             git push https://${GITHUB_TOKEN}@github.com/${GIT_USER_NAME}/${GIT_REPO_NAME}.git HEAD:main
 
             echo "Push réussi ! ArgoCD va déployer la v${BUILD_NUMBER}"
-          """
+          '''
         }
       }
     }
-
-  } // end stages
 
   ////////////////////////////////////////////////////////////////////////////
   // NOTIFICATIONS SLACK
