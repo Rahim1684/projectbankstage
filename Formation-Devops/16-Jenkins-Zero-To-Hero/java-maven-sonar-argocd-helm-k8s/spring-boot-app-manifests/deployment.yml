@@ -17,6 +17,6 @@ spec:
     spec:
       containers:
       - name: spring-boot-app
-        image: diallo962/ultimate-cicd:10
+        image: diallo962/ultimate-cicd:11
         ports:
         - containerPort: 8080
